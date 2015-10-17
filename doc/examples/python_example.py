@@ -9,13 +9,13 @@ from random import randrange
 from ale_python_interface import ALEInterface
 
 if len(sys.argv) < 2:
-  print 'Usage:', sys.argv[0], 'rom_file'
+  print('Usage:', sys.argv[0], 'rom_file')
   sys.exit()
 
 ale = ALEInterface()
 
 # Get & Set the desired settings
-ale.setInt('random_seed', 123)
+ale.setInt(b'random_seed', 123)
 
 # Set USE_SDL to true to display the screen. ALE must be compilied
 # with SDL enabled for this to work. On OSX, pygame init is used to
@@ -25,24 +25,24 @@ if USE_SDL:
   if sys.platform == 'darwin':
     import pygame
     pygame.init()
-    ale.setBool('sound', False) # Sound doesn't work on OSX
+    ale.setBool(b'sound', False) # Sound doesn't work on OSX
   elif sys.platform.startswith('linux'):
-    ale.setBool('sound', True)
-  ale.setBool('display_screen', True)
+    ale.setBool(b'sound', True)
+  ale.setBool(b'display_screen', True)
 
 # Load the ROM file
-ale.loadROM(sys.argv[1])
+ale.loadROM(sys.argv[1].encode("ascii"))
 
 # Get the list of legal actions
 legal_actions = ale.getLegalActionSet()
 
 # Play 10 episodes
-for episode in xrange(10):
+for episode in range(10):
   total_reward = 0
   while not ale.game_over():
     a = legal_actions[randrange(len(legal_actions))]
     # Apply an action and get the resulting reward
     reward = ale.act(a);
     total_reward += reward
-  print 'Episode', episode, 'ended with score:', total_reward
+  print('Episode', episode, 'ended with score:', total_reward)
   ale.reset_game()
